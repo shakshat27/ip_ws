@@ -1,0 +1,38 @@
+{
+ "per_capture": [
+  {
+   "capture": "20261026_112204_depthcheck/2_capture_board0",
+   "corners": 24,
+   "board_distance_m": 0.6235,
+   "depth_minus_colour_mm": 0.2,
+   "plane_angle_deg": 0.124,
+   "depth_plane_rms_mm": 0.0,
+   "depth_pixels": 20020,
+   "board_z_base_colour_m": -0.06613,
+   "board_z_base_depth_m": -0.06632
+  },
+  {
+   "capture": "20261026_112204_depthcheck/2_capture_board1",
+   "corners": 24,
+   "board_distance_m": 0.6236,
+   "depth_minus_colour_mm": 0.09,
+   "plane_angle_deg": 0.083,
+   "depth_plane_rms_mm": 0.0,
+   "depth_pixels": 19729,
+   "board_z_base_colour_m": -0.06623,
+   "board_z_base_depth_m": -0.06632
+  },
+  {
+   "capture": "20261026_112204_depthcheck/2_capture_board2",
+   "corners": 24,
+   "board_distance_m": 0.6237,
+   "depth_minus_colour_mm": 0.0,
+   "plane_angle_deg": 0.225,
+   "depth_plane_rms_mm": 0.0,
+   "depth_pixels": 19927,
+   "board_z_base_colour_m": -0.06632,
+   "board_z_base_depth_m": -0.06632
+  }
+ ],
+ "mean_depth_minus_colour_mm": 0.1
+}

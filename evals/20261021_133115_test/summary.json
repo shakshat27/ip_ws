@@ -1,0 +1,116 @@
+{
+ "data": "/home/msi/ip_ws/datasets/box_v2/test",
+ "images": 300,
+ "methods": {
+  "rfdetr-1pass": {
+   "found": 693,
+   "false": 0,
+   "missed": 2,
+   "precision": 1.0,
+   "recall": 0.9971,
+   "mask_iou": {
+    "n": 693,
+    "mean": 0.944,
+    "sd": 0.022,
+    "median": 0.948,
+    "p95": 0.969,
+    "max": 0.987
+   },
+   "err_xy_mm": {
+    "n": 693,
+    "mean": 1.511,
+    "sd": 0.784,
+    "median": 1.46,
+    "p95": 2.573,
+    "max": 10.955
+   },
+   "err_z_mm": {
+    "n": 693,
+    "mean": -5.984,
+    "sd": 0.148,
+    "median": -5.988,
+    "p95": -5.745,
+    "max": -5.669
+   },
+   "err_yaw_deg": {
+    "n": 693,
+    "mean": 0.421,
+    "sd": 0.17,
+    "median": 0.39,
+    "p95": 0.673,
+    "max": 2.031
+   },
+   "ms": {
+    "n": 300,
+    "mean": 54.775,
+    "sd": 20.822,
+    "median": 59.274,
+    "p95": 80.091,
+    "max": 133.25
+   },
+   "typed_as_box": "693/693"
+  },
+  "rfdetr": {
+   "found": 694,
+   "false": 0,
+   "missed": 1,
+   "precision": 1.0,
+   "recall": 0.9986,
+   "mask_iou": {
+    "n": 694,
+    "mean": 0.944,
+    "sd": 0.022,
+    "median": 0.948,
+    "p95": 0.969,
+    "max": 0.987
+   },
+   "err_xy_mm": {
+    "n": 694,
+    "mean": 1.51,
+    "sd": 0.784,
+    "median": 1.46,
+    "p95": 2.573,
+    "max": 10.955
+   },
+   "err_z_mm": {
+    "n": 694,
+    "mean": -5.984,
+    "sd": 0.148,
+    "median": -5.987,
+    "p95": -5.745,
+    "max": -5.669
+   },
+   "err_yaw_deg": {
+    "n": 694,
+    "mean": 0.422,
+    "sd": 0.171,
+    "median": 0.39,
+    "p95": 0.683,
+    "max": 2.031
+   },
+   "ms": {
+    "n": 300,
+    "mean": 66.898,
+    "sd": 24.798,
+    "median": 69.459,
+    "p95": 102.888,
+    "max": 114.42
+   },
+   "typed_as_box": "694/694"
+  }
+ },
+ "settings": {
+  "data": "/home/msi/ip_ws/datasets/box_v2/test",
+  "methods": [
+   "rfdetr-1pass",
+   "rfdetr"
+  ],
+  "limit": null,
+  "iou": 0.5,
+  "match_dist": 0.03,
+  "model": "/home/msi/ip_ws/models/medium_box_v2_inv_20261021_114416/checkpoint_best_ema.pth"
+ },
+ "camera_lens": "/home/msi/ip_ws/runs/20261019_rfdetr_check/2_capture_pick_overview/camera_info.json",
+ "model": "/home/msi/ip_ws/models/medium_box_v2_inv_20261021_114416/checkpoint_best_ema.pth",
+ "created": "2026-10-21 13:32:08"
+}

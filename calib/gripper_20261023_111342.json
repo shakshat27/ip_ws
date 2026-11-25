@@ -1,0 +1,77 @@
+{
+ "tcp_tool0_m": [
+  -0.00149,
+  -0.00798,
+  0.14458
+ ],
+ "tcp_spread_mm": [
+  0.0,
+  0.0,
+  0.0
+ ],
+ "closing_axis_yaw_in_tool0_rad": 0.021373,
+ "closing_yaw_spread_deg": 0.0,
+ "per_capture": [
+  {
+   "capture": "20261022_121617_snapshot/2_capture_live",
+   "tcp_tool0_m": [
+    -0.00149,
+    -0.00798,
+    0.14458
+   ],
+   "closing_yaw_deg": 1.225,
+   "gap_mm": 88.5,
+   "tilt_deg": 0.38,
+   "tip_pixels": [
+    693,
+    459
+   ]
+  },
+  {
+   "capture": "20261023_111336_gripper/2_capture_gripper0",
+   "tcp_tool0_m": [
+    -0.00149,
+    -0.00798,
+    0.14458
+   ],
+   "closing_yaw_deg": 1.224,
+   "gap_mm": 88.5,
+   "tilt_deg": 0.38,
+   "tip_pixels": [
+    693,
+    459
+   ]
+  },
+  {
+   "capture": "20261023_111336_gripper/2_capture_gripper1",
+   "tcp_tool0_m": [
+    -0.00149,
+    -0.00798,
+    0.14458
+   ],
+   "closing_yaw_deg": 1.224,
+   "gap_mm": 88.5,
+   "tilt_deg": 0.38,
+   "tip_pixels": [
+    693,
+    459
+   ]
+  },
+  {
+   "capture": "20261023_111336_gripper/2_capture_gripper2",
+   "tcp_tool0_m": [
+    -0.00149,
+    -0.00798,
+    0.14458
+   ],
+   "closing_yaw_deg": 1.224,
+   "gap_mm": 88.5,
+   "tilt_deg": 0.38,
+   "tip_pixels": [
+    693,
+    459
+   ]
+  }
+ ],
+ "method": "wrist camera: deepest gripper pixels = fingertips; midpoint = TCP; hand-eye from cell.yaml; gripper open"
+}

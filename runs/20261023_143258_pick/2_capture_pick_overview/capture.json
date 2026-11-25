@@ -1,0 +1,16 @@
+{
+ "label": "pick_overview",
+ "image_stamp": 2174.644444443,
+ "rgb_stamp": 2174.633333333,
+ "still_since_stamp": 2174.608333333,
+ "joints": [
+  1.5708,
+  -1.9642,
+  2.1444,
+  -1.751,
+  -1.5708,
+  0.0
+ ],
+ "joints_source": "joint angles stamped at the image time",
+ "wall_time": "2026-10-23 14:33:01"
+}

@@ -1,0 +1,45 @@
+{
+ "started": "2026-10-21 11:44:19",
+ "model": "RFDETRSegMedium",
+ "rfdetr_version": "?",
+ "torch": "2.14.1+cu130",
+ "gpu": "NVIDIA GeForce RTX 5080",
+ "dataset_counts": {
+  "train": {
+   "images": 4000,
+   "objects": 9980,
+   "classes": [
+    "objects",
+    "box"
+   ]
+  },
+  "valid": {
+   "images": 600,
+   "objects": 1558,
+   "classes": [
+    "objects",
+    "box"
+   ]
+  },
+  "test": {
+   "images": 300,
+   "objects": 695,
+   "classes": [
+    "objects",
+    "box"
+   ]
+  }
+ },
+ "settings": {
+  "dataset_dir": "/home/msi/ip_ws/datasets/box_v2_inv",
+  "epochs": 15,
+  "batch_size": 4,
+  "grad_accum_steps": 4,
+  "lr": 0.0001,
+  "output_dir": "/home/msi/ip_ws/models/medium_box_v2_inv_20261021_114416",
+  "tensorboard": true,
+  "early_stopping": false
+ },
+ "finished": "2026-10-21 13:30:41",
+ "minutes": 106.4
+}

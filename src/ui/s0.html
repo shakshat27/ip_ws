@@ -1,0 +1,301 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>UR10 Cell</title>
+<style>
+  /* Tokens and look from the ros2_ws design rules (reference: z1_missions_ui.html). One dark theme, one accent. */
+  :root {
+    color-scheme: dark;
+    --bg: #0e0f11; --panel: #141618; --panel2: #1a1d21; --line: #24272c;
+    --ink: #e6e7e9; --dim: #8f949c; --muted: #5d636d;
+    --accent: #7aa2f7; --steel: #8fa7cf;
+    --ok: #7fd18c; --warn: #e2b660; --bad: #ef6b73;
+  }
+  * { box-sizing: border-box; }
+  html, body { background: var(--bg); }
+  body { margin: 0; color: var(--ink);
+         font: 13.5px/1.55 ui-sans-serif, system-ui, -apple-system, "Segoe UI", Inter, sans-serif;
+         -webkit-font-smoothing: antialiased; }
+  header { position: sticky; top: 0; z-index: 5; background: rgba(14,15,17,.92);
+           backdrop-filter: blur(6px); border-bottom: 1px solid var(--line);
+           padding: 12px 20px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+  h1 { font-size: 14px; margin: 0 8px 0 0; font-weight: 600; letter-spacing: .2px; }
+  .spacer { flex: 1; }
+  main { max-width: 1320px; margin: 0 auto; padding: 22px 20px 56px; }
+  .grid { display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: 16px; align-items: start; }
+  @media (max-width: 980px) { .grid { grid-template-columns: 1fr; } }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 8px;
+          padding: 18px 18px 16px; margin-bottom: 16px; }
+  h2 { font-size: 11px; margin: 0 0 14px; text-transform: uppercase; letter-spacing: .8px;
+       color: var(--dim); font-weight: 600; }
+  .feed { width: 100%; aspect-ratio: 16 / 10; display: block; border-radius: 6px; background: var(--panel2);
+          border: 1px solid var(--line); object-fit: contain; }
+
+  .pill { font-size: 11.5px; padding: 2px 9px; border-radius: 999px; color: var(--dim);
+          border: 1px solid var(--line); background: transparent; white-space: nowrap; }
+  .pill.live { color: var(--ok); border-color: rgba(127,209,140,.35); }
+  .pill.dead { color: var(--bad); border-color: rgba(239,107,115,.35); }
+
+  .row { display: flex; gap: 10px; flex-wrap: wrap; align-items: flex-end; }
+  .f { display: flex; flex-direction: column; gap: 5px; }
+  .f label { font-size: 11px; color: var(--dim); letter-spacing: .2px; }
+  select { font: inherit; padding: 7px 10px; border: 1px solid var(--line);
+           border-radius: 6px; background: var(--panel2); color: var(--ink); min-height: 34px; }
+  select:focus { outline: none; border-color: var(--accent); }
+  input { font: inherit; padding: 7px 10px; border: 1px solid var(--line); border-radius: 6px; background: var(--panel2);
+          color: var(--ink); min-height: 34px; width: 160px; }
+  input:focus { outline: none; border-color: var(--accent); }
+  table.jog td { padding: 4px 6px; }
+  table.jog button { min-width: 40px; padding: 4px 10px; min-height: 30px; }
+  button { font: inherit; padding: 7px 14px; border-radius: 6px; cursor: pointer; min-height: 34px;
+           border: 1px solid var(--line); background: var(--panel2); color: var(--ink); }
+  button:hover:not(:disabled) { border-color: #3a3f47; background: #1f2328; }
+  button.go { background: var(--accent); border-color: var(--accent); color: #0e0f11; font-weight: 600; }
+  button.go:hover:not(:disabled) { background: #8db1ff; border-color: #8db1ff; }
+  button:disabled { opacity: .45; cursor: default; }
+
+  table { width: 100%; border-collapse: collapse; }
+  th { text-align: left; font-size: 10.5px; text-transform: uppercase; letter-spacing: .7px;
+       color: var(--dim); font-weight: 600; padding: 0 10px 8px; border-bottom: 1px solid var(--line); }
+  td { padding: 9px 10px; border-bottom: 1px solid var(--line); vertical-align: middle; font-variant-numeric: tabular-nums; }
+  tr:last-child td { border-bottom: none; }
+  tbody tr:hover td { background: rgba(255,255,255,.02); }
+  td.num, th.num { text-align: right; }
+  .mono { font-family: ui-monospace, "JetBrains Mono", Menlo, monospace; font-size: 12.5px; }
+  .st { font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: 999px;
+        color: var(--dim); background: rgba(255,255,255,.05); }
+  .st.normal   { color: var(--accent); background: rgba(122,162,247,.12); }
+  .st.inverted { color: var(--steel); background: rgba(143,167,207,.12); }
+  .st.ok, .st.done  { color: var(--ok); background: rgba(127,209,140,.10); }
+  .st.running { color: var(--accent); background: rgba(122,162,247,.12); }
+  .st.failed { color: var(--bad); background: rgba(239,107,115,.10); }
+  .btns { display: flex; gap: 8px; flex-wrap: wrap; }
+  td.last { color: var(--dim); font-size: 12px; max-width: 220px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .st.bad { color: var(--bad); background: rgba(239,107,115,.10); }
+  .empty { color: var(--muted); text-align: center; padding: 22px; }
+  .dim { color: var(--dim); }
+  .err { color: var(--bad); font-size: 12.5px; margin-top: 10px; }
+  .err:empty { display: none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>UR10 cell</h1>
+  <span class="pill" id="pCam">camera</span>
+  <span class="pill" id="pJoints">joints</span>
+  <span class="pill" id="pRate">&mdash;</span>
+  <span class="spacer"></span>
+  <span class="dim mono" id="model">&mdash;</span>
+</header>
+<main>
+  <div class="grid">
+    <div>
+      <div class="card">
+        <h2>Camera</h2>
+        <img class="feed" id="feed" src="/stream.mjpg" alt="">
+        <div class="err" id="err"></div>
+      </div>
+      <div class="card">
+        <h2>Detections</h2>
+        <table>
+          <thead><tr>
+            <th>#</th><th>Class</th><th class="num">Score</th><th>Pass</th>
+            <th class="num">x m</th><th class="num">y m</th><th class="num">z m</th><th class="num">Yaw &deg;</th>
+            <th class="num">Size mm</th><th>Size check</th><th></th>
+          </tr></thead>
+          <tbody id="dets"><tr><td colspan="11" class="empty">&mdash;</td></tr></tbody>
+        </table>
+        <div class="err" id="detErr"></div>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <h2>Spawn</h2>
+        <div class="row">
+          <div class="f"><label for="count">Count</label>
+            <select id="count"><option>1</option><option>2</option><option selected>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option></select></div>
+          <div class="f"><label for="colour">Colour</label>
+            <select id="colour">
+              <option value="random" selected>random</option><option>cardboard</option><option>kraft</option><option>white</option>
+              <option>grey</option><option>black</option><option>red</option><option>yellow</option><option>green</option><option>blue</option>
+            </select></div>
+        </div>
+        <div class="row" style="margin-top:12px">
+          <button class="go" id="spawn">spawn</button>
+          <button id="clear">clear</button>
+          <button id="beltRun">belt run</button>
+          <button id="beltStop">belt stop</button>
+          <span class="dim" id="beltSt">—</span>
+        </div>
+        <div class="err" id="cmdErr"></div>
+      </div>
+      <div class="card">
+        <h2>View</h2>
+        <div class="btns">
+          <button id="pause">pause</button>
+          <button id="twopass">two-pass</button>
+          <button id="snap">snapshot</button>
+        </div>
+        <div class="err" id="viewErr"></div>
+      </div>
+      <div class="card">
+        <h2>Arm</h2>
+        <div class="row" style="margin-bottom:12px">
+          <div class="f"><label for="planner">Planner</label><select id="planner"></select></div>
+        </div>
+        <div class="btns" id="poses"><span class="dim">&mdash;</span></div>
+      </div>
+      <div class="card">
+        <h2>Jog</h2>
+        <div class="row" style="margin-bottom:12px">
+          <div class="f"><label for="jogMode">Mode</label><select id="jogMode">
+            <option value="joint">joint</option><option value="base">base</option><option value="tool">tool</option></select></div>
+          <div class="f"><label for="jogStep">Step</label><select id="jogStep"></select></div>
+        </div>
+        <table class="jog"><tbody id="jogRows"></tbody></table>
+        <div class="row" style="margin-top:12px">
+          <div class="f"><label for="teachName">Pose</label><input id="teachName" value="drop_overview" spellcheck="false"></div>
+          <button id="teach">teach</button>
+        </div>
+        <div class="err" id="jogErr"></div>
+      </div>
+      <div class="card">
+        <h2>Jobs</h2>
+        <div class="btns" style="margin-bottom:12px"><button class="go" id="pick">pick</button></div>
+        <table>
+          <thead><tr><th>Job</th><th>Status</th><th class="num">s</th><th>Last</th></tr></thead>
+          <tbody id="jobs"><tr><td colspan="4" class="empty">&mdash;</td></tr></tbody>
+        </table>
+        <div class="err" id="jobErr"></div>
+      </div>
+      <div class="card">
+        <h2>Stats</h2>
+        <table><tbody>
+          <tr><td class="dim">Detect</td><td class="num" id="sMs">&mdash;</td></tr>
+          <tr><td class="dim">Rate</td><td class="num" id="sFps">&mdash;</td></tr>
+          <tr><td class="dim">Frame age</td><td class="num" id="sAge">&mdash;</td></tr>
+          <tr><td class="dim">Two-pass</td><td class="num" id="sTwo">&mdash;</td></tr>
+          <tr><td class="dim">Joints</td><td class="num" id="sJs">&mdash;</td></tr>
+          <tr><td class="dim">Last command</td><td class="num mono" id="sCmd">&mdash;</td></tr>
+          <tr><td class="dim">Snapshot</td><td class="num mono" id="sSnap">&mdash;</td></tr>
+        </tbody></table>
+      </div>
+    </div>
+  </div>
+</main>
+<script>
+const $ = id => document.getElementById(id);
+const dash = v => (v === null || v === undefined || v === "") ? "—" : v;
+const esc = t => String(t || "").replace(/[&<>"]/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"})[c]);
+const fx = (v, n) => (typeof v === "number") ? v.toFixed(n) : "—";
+
+function pill(el, on, text) { el.textContent = text; el.className = "pill " + (on ? "live" : "dead"); }
+
+async function refresh() {
+  try {
+    const s = await (await fetch("/state", {cache: "no-store"})).json();
+    pill($("pCam"), s.camera, "camera");
+    pill($("pJoints"), s.joints, "joints");
+    $("pRate").textContent = s.fps ? `${s.fps.toFixed(1)} Hz` : "—";
+    $("model").textContent = dash(s.model);
+    $("sMs").textContent = s.detect_ms != null ? `${s.detect_ms} ms` : "—";
+    $("sFps").textContent = s.fps ? `${s.fps.toFixed(1)} Hz` : "—";
+    $("sAge").textContent = s.frame_age != null ? `${s.frame_age.toFixed(2)} s` : "—";
+    $("sTwo").textContent = s.two_pass ? "on" : "off";
+    $("sJs").textContent = s.joints_source ? (s.joints_source.startsWith("joint angles stamped") ? "stamped" : "latest") : "—";
+    $("sCmd").textContent = dash(s.last_command);
+    $("beltSt").textContent = dash(s.belt);
+    $("sSnap").textContent = dash(s.last_snapshot);
+    paused = !!s.paused; twoPass = !!s.two_pass;
+    $("pause").textContent = paused ? "resume" : "pause";
+    $("twopass").textContent = twoPass ? "two-pass on" : "two-pass off";
+    const busy = (s.jobs || []).some(j => j.status === "running");
+    $("pick").disabled = busy;
+    const want = (s.poses || []).join(",");
+    if ($("poses").dataset.k !== want) {
+      $("poses").dataset.k = want;
+      $("poses").innerHTML = (s.poses || []).length ? s.poses.map(p => `<button data-pose="${p}">${p.replace(/_overview$/, " view").replace(/_/g, " ")}</button>`).join("") : '<span class="dim">\u2014</span>';
+      $("poses").querySelectorAll("button").forEach(b => b.onclick = () => post("/move", {pose: b.dataset.pose, planner: $("planner").value}, "jobErr"));
+    }
+    $("poses").querySelectorAll("button").forEach(b => b.disabled = busy);
+    $("jogRows").querySelectorAll("button").forEach(b => b.disabled = busy); $("teach").disabled = busy;
+    const jv = $("jogMode").value === "joint" ? s.q_deg : s.tcp;
+    for (let i = 0; i < 6; i++) $("jv" + i).textContent = jv ? fx(jv[i], 1) : "\u2014";
+    const pl = (s.planners || []).join(",");
+    if ($("planner").dataset.k !== pl) {
+      $("planner").dataset.k = pl;
+      $("planner").innerHTML = (s.planners || []).map(p => `<option value="${p}"${p === s.planner ? " selected" : ""}>${{robodk: "RoboDK", moveit: "MoveIt 2", curobo: "cuRobo"}[p] || p}</option>`).join("");
+    }
+    const jobs = (s.jobs || []).slice().reverse();
+    $("jobs").innerHTML = jobs.length ? jobs.map(j => `<tr><td>${j.name}</td>
+      <td><span class="st ${j.status}">${j.status}</span></td><td class="num">${fx(j.seconds, 1)}</td>
+      <td class="last">${esc(j.last) || "\u2014"}</td></tr>`).join("")
+      : `<tr><td colspan="4" class="empty">\u2014</td></tr>`;
+    $("err").textContent = s.error ? `error: ${s.error}` : "";
+    const rows = s.detections || [];
+    $("dets").innerHTML = rows.length ? rows.map(d => `<tr>
+      <td class="mono">${d.id}</td><td>${d.cls}</td><td class="num">${fx(d.score, 2)}</td>
+      <td><span class="st ${d.source}">${d.source}</span></td>
+      <td class="num">${fx(d.x, 3)}</td><td class="num">${fx(d.y, 3)}</td><td class="num">${fx(d.z, 3)}</td>
+      <td class="num">${fx(d.yaw, 1)}</td><td class="num">${d.size_mm.join(" × ")}</td>
+      <td><span class="st ${d.size_ok ? "ok" : "bad"}">${d.size_ok ? "match" : "mismatch"}</span></td>
+      <td><button class="rowpick" data-x="${d.x}" data-y="${d.y}">pick</button></td></tr>`).join("")
+      : `<tr><td colspan="11" class="empty">—</td></tr>`;
+  } catch (e) {
+    pill($("pCam"), false, "camera"); pill($("pJoints"), false, "joints");
+    $("err").textContent = "offline: s0 not reachable";
+  }
+}
+
+let paused = false, twoPass = true;
+async function post(path, body, errId) {
+  const el = $(errId || "cmdErr"); el.textContent = "";
+  try {
+    const r = await fetch(path, {method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify(body || {})});
+    const j = await r.json();
+    if (!j.ok) el.textContent = `failed: ${j.error || r.status}`;
+    refresh();
+  } catch (e) { el.textContent = "failed: s0 not reachable"; }
+}
+
+$("spawn").onclick = () => post("/spawn", {count: +$("count").value, colour: $("colour").value});
+$("clear").onclick = () => post("/clear");
+$("beltRun").onclick = () => post("/belt", {run: true});
+$("beltStop").onclick = () => post("/belt", {run: false});
+$("pause").onclick = () => post("/view", {paused: !paused}, "viewErr");
+$("twopass").onclick = () => post("/view", {two_pass: !twoPass}, "viewErr");
+$("snap").onclick = () => post("/snapshot", {}, "viewErr");
+$("pick").onclick = () => post("/task", {task: "pick", planner: $("planner").value}, "jobErr");
+// rows are re-rendered every refresh: handle the row buttons on the table body, on press (a re-render between press
+// and release would swallow a click)
+$("dets").onpointerdown = e => {
+  const b = e.target.closest("button.rowpick"); if (!b) return;
+  post("/task", {task: "pick", planner: $("planner").value, x: +b.dataset.x, y: +b.dataset.y}, "detErr");
+};
+// jog: joint mode moves one joint; base / tool move the TCP along or about that frame's axes
+const JOG = {joint: {rows: ["base", "shoulder", "elbow", "wrist 1", "wrist 2", "wrist 3"], unit: ["°", "°", "°", "°", "°", "°"]},
+             cart: {rows: ["x", "y", "z", "rx", "ry", "rz"], unit: ["mm", "mm", "mm", "°", "°", "°"]}};
+const STEPS = {joint: [[1, 1], [5, 5], [10, 10]], cart: [[1, 1], [10, 5], [50, 10]]};   // [translation mm or joint deg, rotation deg]
+function jogLayout() {
+  const m = $("jogMode").value, k = m === "joint" ? "joint" : "cart";
+  $("jogStep").innerHTML = STEPS[k].map(([a, b], i) => `<option value="${i}">${k === "joint" ? a + " °" : a + " mm / " + b + " °"}</option>`).join("");
+  $("jogStep").value = "1";
+  $("jogRows").innerHTML = JOG[k].rows.map((r, i) => `<tr><td>${r}</td><td class="num mono" id="jv${i}">\u2014</td>
+    <td class="dim">${JOG[k].unit[i]}</td><td><button data-i="${i}" data-s="-1">\u2212</button></td><td><button data-i="${i}" data-s="1">+</button></td></tr>`).join("");
+}
+$("jogMode").onchange = jogLayout; jogLayout();
+$("jogRows").onclick = e => {
+  const b = e.target.closest("button"); if (!b) return;
+  const m = $("jogMode").value, i = +b.dataset.i, sign = +b.dataset.s, st = STEPS[m === "joint" ? "joint" : "cart"][+$("jogStep").value];
+  const body = m === "joint" ? {joint: i + 1, step: sign * st[0]}
+             : {axis: JOG.cart.rows[i], step: sign * (i < 3 ? st[0] : st[1]), frame: m};
+  post("/jog", body, "jogErr");
+};
+$("teach").onclick = () => post("/teach", {name: $("teachName").value.trim()}, "jogErr");
+$("feed").onerror = () => setTimeout(() => { $("feed").src = "/stream.mjpg?" + Date.now(); }, 1000);
+refresh(); setInterval(refresh, 500);
+</script>
+</body>
+</html>

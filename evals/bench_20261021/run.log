@@ -1,0 +1,35 @@
+=== --data /home/msi/ip_ws/datasets/box_v2/test
+    /home/msi/ip_ws/datasets/box_v2/test: 300 images, 695 labelled boxes
+    /home/msi/ip_ws/evals/20261021_145919_test/summary.json, detections.csv, worst/ (green = true, blue = found, red = false)
+    rfdetr-1pass found 693, missed 2, false 0  (precision 1.0, recall 0.9971), mask IoU 0.944, typed as box 693/693
+    rfdetr   found 694, missed 1, false 0  (precision 1.0, recall 0.9986), mask IoU 0.944, typed as box 694/694
+=== --data /home/msi/ip_ws/datasets/box_v2/valid
+    /home/msi/ip_ws/datasets/box_v2/valid: 300 images, 779 labelled boxes
+    /home/msi/ip_ws/evals/20261021_150018_valid/summary.json, detections.csv, worst/ (green = true, blue = found, red = false)
+    rfdetr-1pass found 779, missed 0, false 0  (precision 1.0, recall 1.0), mask IoU 0.946, typed as box 779/779
+    rfdetr   found 779, missed 0, false 0  (precision 1.0, recall 1.0), mask IoU 0.946, typed as box 779/779
+=== --data /home/msi/ip_ws/datasets/box_v2/test --perturb dark
+    /home/msi/ip_ws/datasets/box_v2/test: 300 images, 695 labelled boxes
+    /home/msi/ip_ws/evals/20261021_150120_test_dark/summary.json, detections.csv, worst/ (green = true, blue = found, red = false)
+    rfdetr-1pass found 690, missed 5, false 1  (precision 0.9986, recall 0.9928), mask IoU 0.946, typed as box 691/691
+    rfdetr   found 693, missed 2, false 3  (precision 0.9957, recall 0.9971), mask IoU 0.946, typed as box 696/696
+=== --data /home/msi/ip_ws/datasets/box_v2/test --perturb bright
+    /home/msi/ip_ws/datasets/box_v2/test: 300 images, 695 labelled boxes
+    /home/msi/ip_ws/evals/20261021_150220_test_bright/summary.json, detections.csv, worst/ (green = true, blue = found, red = false)
+    rfdetr-1pass found 669, missed 26, false 7  (precision 0.9896, recall 0.9626), mask IoU 0.93, typed as box 676/676
+    rfdetr   found 673, missed 22, false 9  (precision 0.9868, recall 0.9683), mask IoU 0.93, typed as box 682/682
+=== --data /home/msi/ip_ws/datasets/box_v2/test --perturb noise
+    /home/msi/ip_ws/datasets/box_v2/test: 300 images, 695 labelled boxes
+    /home/msi/ip_ws/evals/20261021_150321_test_noise/summary.json, detections.csv, worst/ (green = true, blue = found, red = false)
+    rfdetr-1pass found 686, missed 9, false 0  (precision 1.0, recall 0.9871), mask IoU 0.938, typed as box 686/686
+    rfdetr   found 689, missed 6, false 1  (precision 0.9986, recall 0.9914), mask IoU 0.938, typed as box 690/690
+=== --data /home/msi/ip_ws/datasets/box_v2/test --perturb blur
+    /home/msi/ip_ws/datasets/box_v2/test: 300 images, 695 labelled boxes
+    /home/msi/ip_ws/evals/20261021_150432_test_blur/summary.json, detections.csv, worst/ (green = true, blue = found, red = false)
+    rfdetr-1pass found 690, missed 5, false 0  (precision 1.0, recall 0.9928), mask IoU 0.943, typed as box 690/690
+    rfdetr   found 692, missed 3, false 0  (precision 1.0, recall 0.9957), mask IoU 0.943, typed as box 692/692
+=== --data /home/msi/ip_ws/datasets/box_v2/test --perturb lowcontrast
+    /home/msi/ip_ws/datasets/box_v2/test: 300 images, 695 labelled boxes
+    /home/msi/ip_ws/evals/20261021_150535_test_lowcontrast/summary.json, detections.csv, worst/ (green = true, blue = found, red = false)
+    rfdetr-1pass found 690, missed 5, false 0  (precision 1.0, recall 0.9928), mask IoU 0.945, typed as box 690/690
+    rfdetr   found 691, missed 4, false 1  (precision 0.9986, recall 0.9942), mask IoU 0.945, typed as box 692/692

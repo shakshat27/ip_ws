@@ -1,0 +1,164 @@
+{
+ "data": "/home/msi/ip_ws/datasets/box_v1/test",
+ "images": 300,
+ "methods": {
+  "geometry": {
+   "found": 687,
+   "false": 241,
+   "missed": 8,
+   "precision": 0.7403,
+   "recall": 0.9885,
+   "mask_iou": {
+    "n": 687,
+    "mean": 0.987,
+    "sd": 0.044,
+    "median": 0.991,
+    "p95": 0.998,
+    "max": 1.0
+   },
+   "err_xy_mm": {
+    "n": 687,
+    "mean": 1.636,
+    "sd": 2.444,
+    "median": 1.403,
+    "p95": 2.504,
+    "max": 29.255
+   },
+   "err_z_mm": {
+    "n": 687,
+    "mean": -5.981,
+    "sd": 0.155,
+    "median": -5.984,
+    "p95": -5.742,
+    "max": -4.84
+   },
+   "err_yaw_deg": {
+    "n": 687,
+    "mean": 0.667,
+    "sd": 3.047,
+    "median": 0.385,
+    "p95": 0.51,
+    "max": 39.984
+   },
+   "ms": {
+    "n": 300,
+    "mean": 36.754,
+    "sd": 4.686,
+    "median": 35.931,
+    "p95": 44.944,
+    "max": 64.626
+   },
+   "typed_as_box": "694/928"
+  },
+  "rfdetr-raw": {
+   "found": 687,
+   "false": 15,
+   "missed": 8,
+   "precision": 0.9786,
+   "recall": 0.9885,
+   "mask_iou": {
+    "n": 687,
+    "mean": 0.925,
+    "sd": 0.027,
+    "median": 0.932,
+    "p95": 0.955,
+    "max": 0.971
+   },
+   "err_xy_mm": {
+    "n": 688,
+    "mean": 1.525,
+    "sd": 0.988,
+    "median": 1.463,
+    "p95": 2.553,
+    "max": 20.083
+   },
+   "err_z_mm": {
+    "n": 688,
+    "mean": -5.993,
+    "sd": 0.244,
+    "median": -5.991,
+    "p95": -5.745,
+    "max": -5.67
+   },
+   "err_yaw_deg": {
+    "n": 688,
+    "mean": 0.426,
+    "sd": 0.352,
+    "median": 0.386,
+    "p95": 0.695,
+    "max": 7.949
+   },
+   "ms": {
+    "n": 300,
+    "mean": 62.125,
+    "sd": 16.619,
+    "median": 64.986,
+    "p95": 82.632,
+    "max": 114.509
+   },
+   "typed_as_box": "702/702"
+  },
+  "rfdetr": {
+   "found": 687,
+   "false": 0,
+   "missed": 8,
+   "precision": 1.0,
+   "recall": 0.9885,
+   "mask_iou": {
+    "n": 687,
+    "mean": 0.934,
+    "sd": 0.027,
+    "median": 0.94,
+    "p95": 0.964,
+    "max": 0.977
+   },
+   "err_xy_mm": {
+    "n": 687,
+    "mean": 1.498,
+    "sd": 0.689,
+    "median": 1.46,
+    "p95": 2.549,
+    "max": 6.417
+   },
+   "err_z_mm": {
+    "n": 687,
+    "mean": -5.986,
+    "sd": 0.147,
+    "median": -5.99,
+    "p95": -5.745,
+    "max": -5.67
+   },
+   "err_yaw_deg": {
+    "n": 687,
+    "mean": 0.415,
+    "sd": 0.204,
+    "median": 0.386,
+    "p95": 0.693,
+    "max": 2.689
+   },
+   "ms": {
+    "n": 300,
+    "mean": 69.553,
+    "sd": 21.744,
+    "median": 73.556,
+    "p95": 95.66,
+    "max": 134.343
+   },
+   "typed_as_box": "687/687"
+  }
+ },
+ "settings": {
+  "data": "/home/msi/ip_ws/datasets/box_v1/test",
+  "methods": [
+   "geometry",
+   "rfdetr-raw",
+   "rfdetr"
+  ],
+  "limit": null,
+  "iou": 0.5,
+  "match_dist": 0.03
+ },
+ "camera_lens": "/home/msi/ip_ws/runs/20261019_rfdetr_check/2_capture_pick_overview/camera_info.json",
+ "model": "~/ip_ws/models/medium_box_v1_20261016_104553/checkpoint_best_ema.pth",
+ "created": "2026-10-19 11:27:52"
+}

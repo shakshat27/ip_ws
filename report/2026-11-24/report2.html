@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Vision-Guided Manipulation: Progress Details 2</title>
+<style>
+  @page { size: letter; margin: 16mm 15mm 16mm 15mm; }
+  body { font-family: "Inter", "Segoe UI", "Helvetica Neue", Arial, sans-serif; font-size: 10.2pt; line-height: 1.45; color: #1d2024; margin: 0; }
+  h1 { font-size: 20pt; line-height: 1.2; margin: 0 0 6px; }
+  h2 { font-size: 13.5pt; margin: 22px 0 6px; border-bottom: 1px solid #d8dbe0; padding-bottom: 3px; break-after: avoid; }
+  h3 { font-size: 11pt; margin: 14px 0 4px; break-after: avoid; }
+  p { margin: 5px 0; }
+  .sub { color: #5d636d; margin-bottom: 14px; }
+  figure { margin: 10px 0 12px; break-inside: avoid; }
+  figure img { width: 100%; border: 1px solid #d8dbe0; border-radius: 4px; display: block; }
+  figcaption { font-size: 9.2pt; color: #3d424a; margin-top: 4px; }
+  figcaption b { color: #1d2024; }
+  .pair { display: flex; gap: 10px; break-inside: avoid; }
+  .pair figure { flex: 1; margin: 6px 0; }
+  table { border-collapse: collapse; width: 100%; font-size: 9.2pt; margin: 6px 0 10px; break-inside: auto; }
+  tr { break-inside: avoid; }
+  th, td { text-align: left; vertical-align: top; padding: 4px 6px; border-bottom: 1px solid #e3e5e9; }
+  th { background: #f3f4f6; font-weight: 600; }
+  td.num, th.num { text-align: right; white-space: nowrap; }
+  .ok { color: #1f7a35; font-weight: 600; }
+  .wip { color: #9a6a00; font-weight: 600; }
+  .no { color: #b3262f; font-weight: 600; }
+  ul { margin: 4px 0 8px 18px; padding: 0; }
+  li { margin: 2px 0; }
+  .note { font-size: 9.2pt; color: #5d636d; }
+  .pb { break-before: page; }
+  code { font-family: "JetBrains Mono", Consolas, monospace; font-size: 8.8pt; background: #f3f4f6; padding: 0 3px; border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<h1>Vision-Guided Flexible Robotic Manipulation and Motion-Planning Benchmarking: Progress Details 2</h1>
+<p class="sub">Supporting detail for the status email of 24 November 2026, five weeks after the first report (21 October). It covers the pick-and-place chapter, which I consider done, the three motion planners, the conveyor, and what failed along the way.</p>
+
+<h2>At a glance</h2>
+<ul>
+  <li><b>Pick and place: done.</b> Vision-guided pick-and-place from the conveyor runs end to end with MoveIt 2, NVIDIA cuRobo and RoboDK behind one planner interface: 40 of 41 grasps held over all recorded picks, and 10 of 10 pick-to-basket cycles in the final run (MoveIt and cuRobo). It is ready for benchmarking.</li>
+  <li><b>Phase 1 items from the last report: closed.</b> Hand-eye calibration redone (height error 6 mm → 1 to 3 mm), black boxes handled (two-pass detection plus a retrained model), size check in localisation, gripper tool centre point measured.</li>
+  <li><b>Planners:</b> one shared interface, a shared retiming and execution path, the same cell obstacles for all three, and a benchmark harness. First plan-only measurements are in (preliminary, below).</li>
+  <li><b>Conveyor:</b> after three attempts at a physical chain/belt drive, the belt now runs as a surface-velocity belt controlled by a small PLC. The robot asks the PLC to halt the belt before it picks.</li>
+  <li><b>Peg-in-hole:</b> started, with a new fixture with 2, 1 and 0.1 mm clearance holes. It still has failures and is under work.</li>
+</ul>
+
+<figure>
+  <img src="img/overview_side.png">
+  <figcaption><b>The cell now.</b> The UR10 on its pedestal between the basket table (left, with the peg fixture) and the conveyor (right). The scene was rebuilt since the first report.</figcaption>
+</figure>
+
+<figure>
+  <img src="img/top_view_box_in_basket.png">
+  <figcaption><b>Top view after a pick and place.</b> A box (pink) sits in the basket; a new box waits on the conveyor.</figcaption>
+</figure>
+
+<div class="pair">
+  <figure><img src="img/grasp.png"><figcaption><b>Grasp.</b> Wrist-camera view during a grasp, from the operator dashboard.</figcaption></figure>
+  <figure><img src="img/carry_view.png"><figcaption><b>Carry.</b> The box held after the lift; the hold is checked before the arm moves on.</figcaption></figure>
+</div>
+
+<h2>Where the project stands</h2>
+<table>
+  <tr><th style="width:24%">Area</th><th style="width:15%">Status</th><th>Detail</th></tr>
+  <tr><td>Hand-eye calibration</td><td class="ok">Fixed</td><td>Recalibrated 26 Oct. The 6 mm height error from report 1 is now a 1 to 3 mm residual that depends on the pose (1.2 mm at the pick view).</td></tr>
+  <tr><td>Black boxes</td><td class="ok">Done</td><td>Two-pass detection (normal + colour-inverted image, Subhankar's suggestion) is in the pipeline, with a model retrained on inverted copies: 694 of 695 test boxes, no false detections.</td></tr>
+  <tr><td>Size check (2nd safety layer)</td><td class="ok">Done</td><td>A detection whose measured size does not match a known object is marked a mismatch and not picked (figures below).</td></tr>
+  <tr><td>Gripper TCP and grasp</td><td class="ok">Done</td><td>TCP from the robot model; grasp on a face pair with finger clearance to neighbours; grasp check from where the fingers stop (object width), checked again after the lift.</td></tr>
+  <tr><td>Vision-guided pick</td><td class="ok">Done</td><td>First vision pick on 23 Oct (RoboDK); now pick → lift → hold check → drop in the basket → home.</td></tr>
+  <tr><td>Planner interface (s5)</td><td class="ok">Done</td><td>One request/result format; MoveIt 2, cuRobo and RoboDK as interchangeable backends; shared retiming, metrics, execution and contact stop.</td></tr>
+  <tr><td>Cell obstacles</td><td class="ok">Done</td><td>One obstacle list (floor, belt, tables, baskets) exported from the scene and given identically to all three planners.</td></tr>
+  <tr><td>Benchmark harness</td><td class="wip">Built, final runs due</td><td>Frozen queries from real picks, 30 repetitions, mean ± SD. Final runs with obstacle sets are next.</td></tr>
+  <tr><td>Conveyor</td><td class="ok">Done (halt-to-pick)</td><td>Surface-velocity belt, mini PLC, belt halts for the pick. Picking from a moving belt is still open.</td></tr>
+  <tr><td>Operator dashboard</td><td class="ok">Done</td><td>Live camera with detections, spawn, belt run/stop, planner choice, per-object pick, jog.</td></tr>
+  <tr><td>Peg-in-hole</td><td class="wip">Under work</td><td>Fixture with 2 / 1 / 0.1 mm clearances; insertion still fails at times.</td></tr>
+</table>
+
+<h3>Measured in testing: all recorded picks, 23 Oct to 24 Nov</h3>
+<p>The full benchmark is still to run, but every pick so far was logged with its plans, timings and outcome, so this data already holds up. A cycle is the complete pick-and-place task: move to the view pose, detect, grasp, lift, check the hold, place the box back, and return.</p>
+<table>
+  <tr><th></th><th class="num">RoboDK</th><th class="num">MoveIt 2</th><th class="num">cuRobo</th></tr>
+  <tr><td>Grasps attempted → object held</td><td class="num">9 / 9</td><td class="num">20 / 21 *</td><td class="num">11 / 11</td></tr>
+  <tr><td>Pick and place back, complete cycles</td><td class="num">8</td><td class="num">8</td><td class="num">5</td></tr>
+  <tr><td>Pick and place back, cycle time, s (mean ± SD)</td><td class="num">53.8 ± 2.8</td><td class="num">56.8 ± 13.8</td><td class="num">60.5 ± 16.3 **</td></tr>
+  <tr><td>Cycle time, s, planners kept warm (24 Nov)</td><td class="num">–</td><td class="num">44.5 (2 cycles)</td><td class="num">45.0 (2 cycles)</td></tr>
+  <tr><td>Pick to basket, final run: success</td><td class="num">–</td><td class="num">5 / 5</td><td class="num">5 / 5</td></tr>
+  <tr><td>Pick to basket, cycle time, s</td><td class="num">–</td><td class="num">71.2 ± 2.8</td><td class="num">66.0 ± 2.9 ****</td></tr>
+  <tr><td>Robot motion per cycle (place back), s</td><td class="num">20.9 ± 1.6</td><td class="num">17.9 ± 1.6</td><td class="num">17.3 ± 0.4</td></tr>
+  <tr><td>Planning, free move to the box, ms</td><td class="num">109 ± 73</td><td class="num">68 ± 19</td><td class="num">120 ± 95</td></tr>
+  <tr><td>Planning, straight descent, ms</td><td class="num">952 ± 80 ***</td><td class="num">42 ± 21</td><td class="num">221 ± 8</td></tr>
+  <tr><td>Moves executed → arrived on target</td><td class="num">62 / 63</td><td class="num">148 / 153</td><td class="num">74 / 79</td></tr>
+  <tr><td>Median final joint error</td><td class="num">0.002°</td><td class="num">0.003°</td><td class="num">0.002°</td></tr>
+</table>
+<p class="note">* The one miss: the box moved on the running belt between detection and grasp, which led to the PLC halt (conveyor section); there have been no misses since. A later attempt was refused before the grasp because the finger clearance was only 5 mm. ** Excluding planner start-up; including it, 112 s, which led to the planner daemon. *** RoboDK's straight line then used 5 mm steps plus my IK refinement; it now uses 1 cm steps like the others. RoboDK cycles ran on the previous robot position; MoveIt and cuRobo on the current one. Of the cycle, about 18 to 21 s is robot motion at the shared 0.5 rad/s limit; the rest is detection, gripper actions (1.5 s each) and process start-up, the same for every planner. **** The first cuRobo cycle of the session took 113 s, including the one-time 37 s start-up. The pick-to-basket cycle is longer because the basket is on the far side of the robot: a base swing of about 180° at the shared 0.5 rad/s limit. Most of the moves that did not arrive come from one incident on the day: MoveIt chose a far IK solution, the arm wound into the scene and jammed, and every later move failed until the restart (fixed, see the findings table). Over all three planners: 40 of 41 grasps held; 284 of 295 moves arrived.</p>
+<div class="pair">
+  <figure><img src="img/misdetection_prevetned_by_size.png"><figcaption><b>Size check, case 1.</b> Two basket slats are detected as boxes (score 0.94). Their measured size (16 × 8 × 246 mm) does not match a box, so both rows read "mismatch" and are never picked.</figcaption></figure>
+  <figure><img src="img/dropping_a_cube__misdetection_.png"><figcaption><b>Size check, case 2.</b> While dropping a cube, the basket is detected as a box; the size check rejects it.</figcaption></figure>
+</div>
+
+<h2>Motion planning: one interface, three planners</h2>
+<p>Every move of the pick goes through the same function. The request holds the start joints, the goal (joint angles or a tool pose), the motion type (free or straight line), the shared speed limits and a 5 s timeout. Only the planning itself changes between backends. The retiming (minimum-jerk, scaled to 0.5 rad/s), the metrics, the execution to Isaac at 60 Hz and the contact stop are shared code. That way the benchmark compares planners, not plumbing.</p>
+<table>
+  <tr><th style="width:18%"></th><th>MoveIt 2</th><th>cuRobo</th><th>RoboDK</th></tr>
+  <tr><td>Free move</td><td>OMPL RRTConnect via <code>move_group</code> (own ROS domain)</td><td>GPU trajectory optimisation</td><td>Joint move with RoboDK's collision test</td></tr>
+  <tr><td>Straight line</td><td colspan="3">Identical for all: the same Cartesian steps (1 cm / 2°), each planner's own IK and collision check at every step, then refined on the UR10's published kinematics; a joint jump over 0.2 rad means unreachable</td></tr>
+  <tr><td>Robot model</td><td>UR10 URDF + gripper and camera boxes</td><td>UR10 URDF + fitted collision spheres</td><td>RoboDK UR10 (up to 2.1 mm off, corrected)</td></tr>
+  <tr><td>Obstacles</td><td colspan="3">The same list for all three, exported from the scene: floor, belt, tables, baskets</td></tr>
+</table>
+
+<h3>Preliminary benchmark (plan only)</h3>
+<p class="note">Separate from the pick tests above, a plan-only run of the benchmark harness. These numbers are preliminary: plan only, previous robot position (before it moved onto the pedestal), 36 queries recorded from real picks × 30 repetitions, interleaved. RoboDK's column is still to run. The final benchmark will use the new 24 queries and the obstacle sets.</p>
+<table>
+  <tr><th>Move</th><th>Success</th><th class="num">cuRobo, planning ms</th><th class="num">MoveIt 2, planning ms</th></tr>
+  <tr><td>Approach (free)</td><td>100 % both</td><td class="num">163 ± 30</td><td class="num">30 ± 9</td></tr>
+  <tr><td>Descent (straight)</td><td>100 % both</td><td class="num">170 ± 7</td><td class="num">6 ± 1</td></tr>
+  <tr><td>Lift (straight)</td><td>100 % both</td><td class="num">18 ± 1</td><td class="num">6 ± 1</td></tr>
+  <tr><td>Return (free)</td><td>100 % both</td><td class="num">11 ± 1</td><td class="num">20 ± 4</td></tr>
+</table>
+<p>Findings so far:</p>
+<ul>
+  <li><b>Repeats flatter cuRobo.</b> Running one query 30 times in a row made cuRobo look about 15× faster, because it reuses its last solution. The harness now cycles through all queries, so no call repeats the one before, as in a real pick.</li>
+  <li><b>With an empty scene the planners give nearly the same paths</b> (same joint and tool path lengths), so planning time is the only difference. This is why the obstacles were added before the final benchmark.</li>
+  <li>cuRobo needs about 150 ms for the approach and the descent and 10 to 20 ms for other moves. I don't know the cause yet.</li>
+</ul>
+
+<h2>cuRobo</h2>
+<ul>
+  <li><b>Installation:</b> the latest cuRobo builds its GPU kernels with NVIDIA Warp, so no CUDA toolkit install was needed. It runs in its own Python environment sharing PyTorch with the detector, on the RTX 5080.</li>
+  <li><b>Robot model:</b> cuRobo ships UR10e models only; this cell has a UR10 (CB3), with link lengths up to 24 mm different. I generated the model from Universal Robots' description, with collision spheres fitted to the link meshes and spheres for the gripper and camera.</li>
+  <li><b>Frame trap:</b> cuRobo's (and MoveIt's) <code>base_link</code> is the UR base turned 180° about the vertical. My first goal ended 1 m away until poses were flipped on the way in.</li>
+  <li><b>Straight lines:</b> its own waypoint-following optimiser found no solution at 1 or 3 mm path tolerance, and only succeeded at 5 mm. So for the benchmark it uses its own IK at each of the shared Cartesian steps, like the other two.</li>
+  <li><b>Start-up cost:</b> about 37 s to start (GPU warm-up). Each pick step used to be a fresh process, so a cuRobo pick took 311 s, 259 s of it start-ups. A planner daemon now keeps all planners alive between steps: 44 s per pick for cuRobo and MoveIt alike.</li>
+  <li><b>Sharing the GPU with Isaac</b> slows the simulation and once stuttered the desktop; GPU-heavy benchmark runs go with Isaac closed.</li>
+  <li><b>Viewer:</b> a browser view (viser) shows cuRobo's collision model, the obstacles, the planned tool path, and the live arm from the robot's joint states.</li>
+</ul>
+<figure>
+  <img src="img/curobo_viser.png" style="max-height:330px;object-fit:contain">
+  <figcaption><b>cuRobo viewer.</b> The UR10 as cuRobo sees it (collision spheres), the cell obstacles as translucent boxes, and the tool path of a planned move (pink).</figcaption>
+</figure>
+
+<h2 class="pb">Conveyor: from a physical chain drive to a PLC-controlled belt</h2>
+<p>I wanted a conveyor with real physics: rollers driven by a belt or chain, so that box motion comes from contact rather than a script. I tried three ways:</p>
+<table>
+  <tr><th style="width:24%">Method</th><th>What happened</th></tr>
+  <tr><td>1. A joint on every chain link / tooth</td><td>The frame rate dropped. The joints had some free play, so the chain always stayed too loose to actually turn the rollers. The conveyor frame itself had to be CAD-designed to keep the roller gears locked in place, or they popped out.</td></tr>
+  <tr><td>2. Joints on only some links (skip teeth)</td><td>The same problems with fewer joints: still slack, still no reliable rotation.</td></tr>
+  <tr><td>3. No joints: rigid teeth pushed along, like a beyblade launcher's ripcord</td><td>The teeth ran out at the end and had to be respawned at the start, and the respawned teeth no longer meshed with the roller teeth.</td></tr>
+</table>
+<div class="pair">
+  <figure><img src="img/chain_method.png"><figcaption><b>Method 1.</b> Chain with a joint on every link, driving the roller gears in a CAD-designed frame.</figcaption></figure>
+  <figure><img src="img/teeth_skipping_for_joint_reduc.png"><figcaption><b>Method 2.</b> Skipping teeth to reduce the joint count.</figcaption></figure>
+</div>
+<div class="pair">
+  <figure><img src="img/teeth_skipping__low_num_of_joi.png"><figcaption><b>Method 2, fewer joints for a higher frame rate.</b> The chain sags between the sprockets.</figcaption></figure>
+  <figure><img src="img/broken_belt.png"><figcaption><b>Failure.</b> Belt teeth out of mesh with the roller gears.</figcaption></figure>
+</div>
+<p><b>What runs now:</b> the belt is a kinematic body whose velocity acts as a surface velocity (0.03 m/s), so boxes resting on it are carried by friction, at full frame rate. A small mini PLC owns the belt, as a real line's PLC would:</p>
+<ul>
+  <li>Tags: <code>pick_request</code> (written by the robot), <code>run_enable</code> (operator); outputs: the belt speed and its state.</li>
+  <li>An Isaac action graph applies the PLC's speed to the belt.</li>
+  <li>When the robot decides to pick, it writes <code>pick_request</code>, waits until the PLC reports the belt halted, measures the box on the still belt, picks, and releases the belt however the pick ends.</li>
+  <li>The dashboard has belt run / stop buttons and shows the belt state.</li>
+</ul>
+<p>Picking from a moving belt (tracking the box from the belt speed) is still open. For now I halt the belt to pick, a common choice on real lines.</p>
+
+<h2>Peg-in-hole</h2>
+<figure>
+  <img src="img/new_peg_in_hole_with_tolerance.png" style="max-height:300px;object-fit:contain">
+  <figcaption><b>Peg-in-hole fixture.</b> Holes with 2, 1 and 0.1 mm clearance. The insertion has had failures and is still under work.</figcaption>
+</figure>
+
+<h2>What I tried, what failed, what I learned</h2>
+<table>
+  <tr><th style="width:21%">Problem</th><th style="width:26%">Cause</th><th style="width:28%">What I did</th><th>Lesson</th></tr>
+  <tr><td>Box slipped out of the grasp; fingers sank about 11 mm into the box</td><td>Physics at 60 steps/s too coarse for a two-finger grasp of a 35 mm box</td><td>240 steps/s and a high-friction pad material on the fingers</td><td>Check contact physics before blaming the grasp</td></tr>
+  <tr><td>Wrist joint turned against its command on faster moves</td><td>Very stiff drives at the coarse physics step</td><td>Fixed by the 240 steps/s; contact stop kept as a safety net</td><td>Watch commanded vs actual joints</td></tr>
+  <tr><td>Contact stop tripped with no contact</td><td>The 0.15 to 0.2 s feedback delay was counted as following error</td><td>Compare against the command of 0.2 s ago</td><td>Know the latency of your feedback</td></tr>
+  <tr><td>Grasp check passed with nothing held</td><td>"Fingers not fully closed" was the test</td><td>Expect the fingers to stop at the object's width; check again after the lift</td><td>Test for the right answer, not for "not wrong"</td></tr>
+  <tr><td>MoveIt's move to the basket took 74 s and drove the arm into the scene</td><td>For a pose goal, MoveIt's goal sampler took a far IK solution (base 4.37, shoulder 5.04 rad): a 56.7 rad joint path</td><td>Pose goals become joint goals via the IK solution nearest the start, collision-checked by MoveIt, as RoboDK and cuRobo already do; the drop pose turns with the base swing. Same move now 2.8 to 3.4 rad</td><td>Same goal is not enough: the same goal configuration is what makes planners comparable</td></tr>
+  <tr><td>Benchmark made cuRobo 15× too fast</td><td>One query repeated 30 times; cuRobo reuses its last solution</td><td>Repetitions cycle through all queries</td><td>A benchmark must look like the real task</td></tr>
+  <tr><td>cuRobo pick took 5 minutes</td><td>Every pick step restarted the planner (37 s each)</td><td>Planner daemon: planners stay alive between steps (311 s → 44 s)</td><td>Separate start-up cost from planning cost</td></tr>
+  <tr><td>Both detectors suddenly saw nothing</td><td>The robot had been moved in the scene; everything taught in its base frame was stale</td><td>Re-taught the belt, re-exported obstacles, re-recorded the benchmark queries</td><td>After any scene change, check the robot's base pose first</td></tr>
+  <tr><td>No camera, joint or tf topics after an Isaac restart</td><td>Isaac loaded all action graphs disabled (cause unknown)</td><td>The start-up script switches the graphs on</td><td>Check the graphs actually tick, not just that they exist</td></tr>
+  <tr><td>Physical chain/belt conveyor</td><td>Joint free play, frame rate, respawned teeth out of mesh (above)</td><td>Surface-velocity belt + mini PLC</td><td>Model the behaviour the robot needs, not the mechanism</td></tr>
+  <tr><td>RoboDK not reachable from the pipeline</td><td>It took another API port; today its license is deactivated</td><td>Port search and station check; license to reactivate</td><td>Fail loudly, never launch a second instance</td></tr>
+  <tr><td>Boxes rest a few mm above the belt</td><td>Not investigated</td><td>Accepted for now; grasp heights come from the camera, so picks are unaffected</td><td>Note it and move on</td></tr>
+</table>
+
+<h2>Next</h2>
+<ul>
+  <li>Final benchmark: the 24 new queries plus obstacle sets, at least 30 trials each, mean ± SD with paired statistics, all three planners (RoboDK once its license is active).</li>
+  <li>Peg-in-hole: fix the insertion failures across the three clearances.</li>
+  <li>Picking from a moving belt.</li>
+  <li>Final report.</li>
+</ul>
+
+</body>
+</html>

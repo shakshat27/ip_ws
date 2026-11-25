@@ -1,0 +1,152 @@
+# Cell description shared by perception now, and by the planners later.
+# Robot BASE frame (UR convention), metres and radians, unless a key says otherwise.
+
+camera:
+  mount: wrist             # eye-in-hand on wrist_3_link since 2026-10-06; pose changes as the arm moves
+  frame: Camera_OmniVision_OV9782_Color   # name Isaac publishes on /tf (the colour sensor prim)
+  rgb_topic: /rgb
+  depth_topic: /depth
+  info_topic: /camera_info
+
+surfaces:                 # flat areas objects rest on, in the ROBOT BASE frame: rectangle centre (x, y, z), size (along, across), yaw
+  belt_a:                 # TAUGHT 2026-11-24 16:12 by camera: RANSAC plane, flatness 0.32 mm, tilt 0.21 deg; seen part only
+    centre: [-0.0834, -0.6815, -0.1005]
+    size: [0.7728, 0.4446]
+    yaw: -0.00364
+
+objects:                  # what can appear; gt_frame = its name on /tf (ground truth, scoring only)
+  box:
+    gt_frame: Cube
+    size: [0.035, 0.035, 0.035]
+    yaw_symmetry_deg: 90  # a square footprint looks identical every 90 deg
+
+capture:
+  max_joint_speed: 0.01   # rad/s; pictures are only measured while every arm joint is slower than this
+  max_pose_age: 0.10      # s; camera pose must be known within this of the image timestamp
+  max_pair_dt: 0.02       # s; colour and depth frames are paired only if their timestamps are this close (real D455: use aligned depth)
+
+robot:
+  model: ur10
+  dh:                      # Universal Robots UR10 nominal DH parameters (m, rad); real cell: that robot's calibrated values
+    d:     [0.1273, 0.0, 0.0, 0.163941, 0.1157, 0.0922]
+    a:     [0.0, -0.612, -0.5723, 0.0, 0.0, 0.0]
+    alpha: [1.5707963267948966, 0.0, 0.0, 1.5707963267948966, -1.5707963267948966, 0.0]
+
+hand_eye:                  # camera optical frame in the flange (tool0) frame
+  tool0_T_camera:          # CALIBRATED 2026-10-26 11:32: eye-in-hand, ChArUco, Park, 15 poses, board spread 0.99 mm rms (handeye_20261026_113015.json)
+    xyz: [-0.01183, -0.05722, -0.03818]
+    rpy: [-0.003285, -0.001929, -3.138174]
+
+referee:                   # SCORING ONLY, as the problem statement requires ("use ground truth as the reference for pose error").
+                           # Never read by anything that moves the robot or sets a parameter. Real cell: this block does not exist.
+  world_T_base:            # UR base = Isaac base_link turned 180 deg about Z (commissioning check, flange error 0.00 mm)
+    xyz: [3.6458, 1.2944, 0.4605]
+    rpy: [0.0, 0.0, 0.0]
+
+gripper:                   # Robotiq 2F-85
+  max_opening: 0.085       # m, Robotiq datasheet stroke
+  opening_margin: 0.020    # m, extra opening beyond the object width before closing (0.010 until 2026-10-23: first pick touched)
+  close_rad: 0.70          # finger_joint target to grip: the box stops the fingers, the drive keeps squeezing
+  pad:                     # GRIPPER CAD (Robotiq 2F-85 fingertip pad mesh), in each inner finger link frame; the TCP is the
+                           # midpoint of the two pad centres, read live through /tf (tools/gripper_tcp_tf.py)
+    centre_in_left_inner_finger:  [0.0, -0.05313, 0.12942]
+    centre_in_right_inner_finger: [0.0, 0.05313, 0.12942]
+    thickness: 0.0192      # m, along the closing axis (pad centre to inner face = half of it)
+    width: 0.022           # m, across the closing axis
+    length: 0.038          # m, along the tool axis (pad centre to fingertip = half of it)
+  # --- FROM /tf (robot model: finger links + pad CAD), written by tools/gripper_tcp_tf.py --write; do not edit by hand
+  tool0_T_tcp:             # /tf 2026-10-23 15:34 (gripper_tf_20261023_153451.json), gripper open; pad-centre midpoint
+    xyz: [-0.00000, 0.00000, 0.12943]
+    rpy: [0.0, 0.0, 0.0]
+  closing_axis_yaw_in_tool0: 0.000000   # rad, /tf
+  opening_table:           # /tf sweep: gap = inner pad faces; tcp_z = pad-centre midpoint depth below the flange
+    finger_joint_rad: [0.0, 0.1, 0.2, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7]
+    gap_m:            [0.08704, 0.08005, 0.07168, 0.06038, 0.05444, 0.04899, 0.04355, 0.03809, 0.03177, 0.02617, 0.02094, 0.01474]
+    tcp_z_m:          [0.12943, 0.13213, 0.13489, 0.13789, 0.13919, 0.14018, 0.14102, 0.14171, 0.14234, 0.14274, 0.14299, 0.14313]
+
+grasp:                     # rule-based look-then-grasp (agreed 2026-10-12)
+  approach_height: 0.10    # m, pre-grasp / lift point straight above the grasp pose (operator's +10 cm)
+  grip_depth_fraction: 0.5 # TCP (pad centre) this fraction of the object height below its top
+  surface_clearance: 0.005 # m, the pads' lower ends never closer than this to the surface (12 mm 2026-10-23..26 to cover PC-1; back to 5 mm after re-calibrating)
+  finger_clearance: 0.005  # m, finger pads at the approach opening must stay this far from every other object
+
+planner:                   # script 5: ONE interface, the backend is chosen here or with --planner (lib/planning.py)
+  backend: interim         # interim (joint interpolation baseline) | robodk | moveit (later) | curobo (later)
+  limits:                  # shared by every backend (shared time-parameterisation), so results compare
+    max_joint_speed: 0.5   # rad/s, peak joint speed of the executed trajectory
+    min_duration_s: 1.0
+  timeout_s: 5.0
+  robodk:
+    port: 20500            # RoboDK API port
+    station: ~/ip_ws/cell.rdk   # built by the operator 2026-10-23: UR10 at the station origin (= UR base frame), 2F-85 on the flange
+    robot: UR10            # robot item name (the 2F-85 is also a 'robot' item, a mechanism: name the arm explicitly)
+    collision_check: true  # RoboDK MoveJ_Test / MoveL_Test collision counts; ON since 2026-10-26 (6 by-design pairs excluded via API: UR10 link 6 - gripper base, gripper linkage 0-2 1-3 2-4 3-5 4-6). SELF-COLLISION ONLY: no obstacles in the station yet; previously OFF because the
+                           # gripper-vs-flange contact (6 pairs report "in collision" at rest, 2026-10-23)
+
+named_poses:               # other named joint configurations (rad), moved to by s1_mover / the planner
+  home:
+    joints: [0.0, -1.5708, 1.5708, -1.5708, -1.5708, 0.0]   # the scene's authored ready pose (0 -90 90 -90 -90 0 deg; operator's), arm upright, tool down
+
+capture_poses:             # named joint configurations (rad) where the arm stops to look; moved to by the planner under test (interim: s1_mover)
+  pick_overview:
+    joints: [1.5708, -1.9642, 2.1444, -1.751, -1.5708, 0.0]   # TAUGHT 2026-10-12 by operator: base 90 deg, camera 0.60 m straight above the belt end, gripper clear of the pick zone
+    looks_at: belt_a
+    purpose: find every object in the pick zone
+  drop_overview:
+    joints: null           # to be taught
+    looks_at: belt_b
+    purpose: find free space in the drop zone
+
+refine_capture:            # computed from a detection: camera straight above the chosen object
+  standoff: 0.45           # m camera-to-object; a real D455 measures from roughly 0.4 m; a D405 would allow ~0.15 m
+
+detector:                  # trained model used by s3_detect --method rfdetr (CV-4/5)
+  model: ~/ip_ws/models/medium_box_v2_inv_20261021_114416/checkpoint_best_ema.pth   # RF-DETR-Seg Medium, box_v2 + inverted copies, 15 epochs; box_v2 test 694/695 two-pass, 0 false (2026-10-21)
+  size: medium             # must match the checkpoint
+  threshold: 0.5           # minimum confidence to keep a detection
+  two_pass: true           # also detect on the colour-inverted image (black boxes look white there); suggested by Subhankar 2026-10-21
+  two_pass_overlap: 0.3    # an inverted-pass mask is added only if it overlaps no normal-pass mask by more than this (IoU)
+  depth_check:             # keep a mask only if the SAME camera's depth shows something standing there (real D455: aligned depth)
+    min_raised_fraction: 0.5   # share of the mask's valid depth pixels that must stand > detection.min_height above the surface
+    min_raised_pixels: 50      # and at least this many of them
+    trim: true                 # drop mask pixels whose depth lies at the surface (pixels with no depth are kept)
+
+detection:
+  near_cutoff: 0.25       # m; ignore anything closer to the camera than this (the gripper fingers are ~0.07-0.20 m)
+  min_height: 0.008       # ignore anything flatter than this above the surface (noise, belt seams)
+  max_height: 0.30
+  min_pixels: 150         # smaller blobs are noise
+
+calibration:
+  charuco:                 # the board used for hand-eye calibration. Real cell: measure the printed square with calipers
+    squares: [7, 5]
+    square: 0.04           # m, chessboard square side
+    marker: 0.03           # m, ArUco marker side
+    dictionary: DICT_5X5_100
+
+scene:                     # obstacles in the ROBOT BASE frame (world minus robot origin), ONE list for cuRobo, MoveIt and RoboDK (lib/scene.py)
+                           # re-exported 2026-11-24 16:13 by tools/export_scene_meshes.py for the robot's NEW position (operator moved it onto the pedestal: base world 4.059, 1.294, 0.659)
+                           # ignored on purpose (operator): belt-looking objects under /World/floor, pegs, charuco board, walls. robot_pedestal is the robot's mount: it touches the base, so it is off
+  cuboids:
+    - {name: floor, centre: [0.0000, 0.0000, -0.7088], dims: [20.0000, 20.0000, 0.1000], enabled: true}
+    - {name: table_top, centre: [-0.6131, 0.6279, 0.0261], dims: [1.7979, 0.5625, 0.0250], enabled: true}
+    - {name: belt, centre: [-0.6933, -0.7642, -0.1130], dims: [1.9593, 0.5305, 0.0200], enabled: true}   # belt mesh top -0.1030; camera-taught belt_a plane -0.1005 (2026-11-24 16:12)
+  meshes:
+    - {name: table_top_2, file: models/scene/table_top_2.obj, enabled: true}
+    - {name: basket_a, file: models/scene/basket_a.obj, enabled: true}
+    - {name: basket_b, file: models/scene/basket_b.obj, enabled: true}
+    - {name: robot_pedestal, file: models/scene/robot_pedestal.obj, enabled: false}
+
+plc:                       # mini PLC (tools/mini_plc.py): owns the belt; the robot only writes tags (operator, 2026-11-24)
+  belt_speed: 0.03         # m/s, belt surface speed along +x world when running (operator's value on /World/Conveyors/Plane)
+  scan_s: 0.05             # PLC scan period
+  settle_s: 0.5            # robot waits this long after the PLC reports the belt halted, before it measures
+  halt_timeout_s: 5.0      # robot gives up if the PLC does not confirm the halt in this time
+  watch_timeout_s: 120.0   # pick task waits at most this long for an object to arrive in view
+
+drop:                      # where a picked object is released: over /World/Basket01 (scene item basket_b), ROBOT BASE frame
+  centre: [0.0470, 0.6245] # x, y of the basket centre (cell.usd 2026-11-24, from models/scene/scene.json)
+  rim_z: 0.1460            # top of the basket walls
+  clearance: 0.10          # fingertips (TCP) this far above the rim while travelling to and from the basket
+  floor_z: 0.0553          # basket floor (highest floor-level face of the basket mesh; slats 0.0428-0.0553)
+  place_gap: 0.005         # the box is set down this far above the floor (or on whatever it meets first: contact stop)

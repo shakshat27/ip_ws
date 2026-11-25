@@ -1,0 +1,16 @@
+{
+ "per_capture": [
+  {
+   "capture": "20261026_112831_depthcheck/2_capture_board0",
+   "corners": 10,
+   "board_distance_m": 0.6337,
+   "depth_minus_colour_mm": 2.07,
+   "plane_angle_deg": 0.347,
+   "depth_plane_rms_mm": 0.0,
+   "depth_pixels": 20220,
+   "board_z_base_colour_m": -0.06147,
+   "board_z_base_depth_m": -0.06341
+  }
+ ],
+ "mean_depth_minus_colour_mm": 2.07
+}

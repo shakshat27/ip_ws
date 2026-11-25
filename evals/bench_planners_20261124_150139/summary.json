@@ -1,0 +1,192 @@
+{
+ "queries": "evals/bench_queries.json",
+ "reps": 3,
+ "limits": {
+  "max_joint_speed": 0.5,
+  "min_duration_s": 1.0
+ },
+ "setup": {
+  "curobo": {
+   "connect_s": 51.45
+  },
+  "moveit": {
+   "connect_s": 1.69
+  }
+ },
+ "results": {
+  "curobo": {
+   "pre_grasp": {
+    "n": 27,
+    "success_rate": 0.0,
+    "failures": {
+     "no_ik": 27
+    },
+    "planning_time_s": {
+     "mean": 0.633104,
+     "sd": 0.045893
+    },
+    "duration_s": null,
+    "joint_path_rad": null,
+    "tool_path_m": null,
+    "peak_speed_rad_s": null,
+    "peak_accel_rad_s2": null,
+    "peak_jerk_rad_s3": null
+   },
+   "grasp": {
+    "n": 27,
+    "success_rate": 0.0,
+    "failures": {
+     "unreachable": 27
+    },
+    "planning_time_s": {
+     "mean": 0.189251,
+     "sd": 0.008891
+    },
+    "duration_s": null,
+    "joint_path_rad": null,
+    "tool_path_m": null,
+    "peak_speed_rad_s": null,
+    "peak_accel_rad_s2": null,
+    "peak_jerk_rad_s3": null
+   },
+   "lift": {
+    "n": 27,
+    "success_rate": 0.0,
+    "failures": {
+     "unreachable": 27
+    },
+    "planning_time_s": {
+     "mean": 0.018823,
+     "sd": 0.002181
+    },
+    "duration_s": null,
+    "joint_path_rad": null,
+    "tool_path_m": null,
+    "peak_speed_rad_s": null,
+    "peak_accel_rad_s2": null,
+    "peak_jerk_rad_s3": null
+   },
+   "to_capture_end": {
+    "n": 24,
+    "success_rate": 0.0,
+    "failures": {
+     "no_ik": 24
+    },
+    "planning_time_s": {
+     "mean": 0.248145,
+     "sd": 0.048675
+    },
+    "duration_s": null,
+    "joint_path_rad": null,
+    "tool_path_m": null,
+    "peak_speed_rad_s": null,
+    "peak_accel_rad_s2": null,
+    "peak_jerk_rad_s3": null
+   },
+   "home_to_view": {
+    "n": 3,
+    "success_rate": 0.0,
+    "failures": {
+     "no_ik": 3
+    },
+    "planning_time_s": {
+     "mean": 0.187803,
+     "sd": 0.004031
+    },
+    "duration_s": null,
+    "joint_path_rad": null,
+    "tool_path_m": null,
+    "peak_speed_rad_s": null,
+    "peak_accel_rad_s2": null,
+    "peak_jerk_rad_s3": null
+   }
+  },
+  "moveit": {
+   "pre_grasp": {
+    "n": 27,
+    "success_rate": 0.0,
+    "failures": {
+     "backend_error": 27
+    },
+    "planning_time_s": {
+     "mean": 0.00257,
+     "sd": 0.009181
+    },
+    "duration_s": null,
+    "joint_path_rad": null,
+    "tool_path_m": null,
+    "peak_speed_rad_s": null,
+    "peak_accel_rad_s2": null,
+    "peak_jerk_rad_s3": null
+   },
+   "grasp": {
+    "n": 27,
+    "success_rate": 0.0,
+    "failures": {
+     "unreachable": 27
+    },
+    "planning_time_s": {
+     "mean": 0.005089,
+     "sd": 0.004472
+    },
+    "duration_s": null,
+    "joint_path_rad": null,
+    "tool_path_m": null,
+    "peak_speed_rad_s": null,
+    "peak_accel_rad_s2": null,
+    "peak_jerk_rad_s3": null
+   },
+   "lift": {
+    "n": 27,
+    "success_rate": 0.0,
+    "failures": {
+     "unreachable": 27
+    },
+    "planning_time_s": {
+     "mean": 0.005616,
+     "sd": 0.004092
+    },
+    "duration_s": null,
+    "joint_path_rad": null,
+    "tool_path_m": null,
+    "peak_speed_rad_s": null,
+    "peak_accel_rad_s2": null,
+    "peak_jerk_rad_s3": null
+   },
+   "to_capture_end": {
+    "n": 24,
+    "success_rate": 0.0,
+    "failures": {
+     "backend_error": 24
+    },
+    "planning_time_s": {
+     "mean": 0.000763,
+     "sd": 0.000114
+    },
+    "duration_s": null,
+    "joint_path_rad": null,
+    "tool_path_m": null,
+    "peak_speed_rad_s": null,
+    "peak_accel_rad_s2": null,
+    "peak_jerk_rad_s3": null
+   },
+   "home_to_view": {
+    "n": 3,
+    "success_rate": 0.0,
+    "failures": {
+     "backend_error": 3
+    },
+    "planning_time_s": {
+     "mean": 0.052193,
+     "sd": 0.000804
+    },
+    "duration_s": null,
+    "joint_path_rad": null,
+    "tool_path_m": null,
+    "peak_speed_rad_s": null,
+    "peak_accel_rad_s2": null,
+    "peak_jerk_rad_s3": null
+   }
+  }
+ }
+}

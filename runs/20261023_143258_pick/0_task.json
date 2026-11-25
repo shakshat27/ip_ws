@@ -1,0 +1,27 @@
+{
+ "task": "pick",
+ "type": "box",
+ "pose": "pick_overview",
+ "planner": "robodk",
+ "then": "return",
+ "started": "2026-10-23 14:32:58",
+ "decisions": [
+  {
+   "step": "choose object",
+   "result": 0,
+   "reason": "#0, the nearest 'box' to the robot base with a safe finger placement (0.577 m; finger clearance +5.8 mm)"
+  },
+  {
+   "step": "grasp check",
+   "result": true,
+   "reason": "the fingers stopped short of the close target: object between them"
+  },
+  {
+   "step": "hold check",
+   "result": true,
+   "reason": "after the lift the fingers still stop short: object held"
+  }
+ ],
+ "outcome": "picked and returned",
+ "finished": "2026-10-23 14:33:51"
+}

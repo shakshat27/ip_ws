@@ -1,0 +1,1 @@
+pick_overview_0.60m.png: camera 0.60 m above belt -> joints (rad) [1.5708, -1.9642, 2.1444, -1.751, -1.5708, 0.0]

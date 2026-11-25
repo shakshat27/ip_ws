@@ -1,0 +1,6 @@
+Ubuntu 24.04.4 LTS
+7.0.0-43-generic
+NVIDIA GeForce RTX 5080, 580.178.04
+Python 3.12.3
+curobo commit 163e335cbfc559b6cec48dbcb9d82e4375ea2f70 (third_party/curobo, editable)
+old ~/ip_ws/curobo clone commit 78fd485fa82d9b9a063fb4985e371814587e666a (clean)

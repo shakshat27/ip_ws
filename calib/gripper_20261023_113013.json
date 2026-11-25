@@ -1,0 +1,32 @@
+{
+ "tcp_tool0_m": [
+  -0.00214,
+  -0.01061,
+  0.15591
+ ],
+ "tcp_spread_mm": [
+  0.0,
+  0.0,
+  0.0
+ ],
+ "closing_axis_yaw_in_tool0_rad": 0.180884,
+ "closing_yaw_spread_deg": 0.0,
+ "per_capture": [
+  {
+   "capture": "20261023_113011_gripper/2_capture_gripper0",
+   "tcp_tool0_m": [
+    -0.00214,
+    -0.01061,
+    0.15591
+   ],
+   "closing_yaw_deg": 10.364,
+   "gap_mm": 18.5,
+   "tilt_deg": 2.02,
+   "tip_pixels": [
+    365,
+    209
+   ]
+  }
+ ],
+ "method": "wrist camera: deepest gripper pixels = fingertips; midpoint = TCP; hand-eye from cell.yaml; gripper open"
+}

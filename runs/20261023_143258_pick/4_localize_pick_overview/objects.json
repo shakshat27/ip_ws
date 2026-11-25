@@ -1,0 +1,26 @@
+{
+ "detections": "3_detect_pick_overview",
+ "objects": [
+  {
+   "id": 0,
+   "type": "box",
+   "type_source": "detector class",
+   "surface": "belt_a",
+   "position": [
+    0.20081724548339844,
+    -0.5408497924804687,
+    -0.048710011491641225
+   ],
+   "yaw_deg": 89.61528778076172,
+   "yaw_symmetry_deg": 90,
+   "footprint": [
+    0.03448876953125,
+    0.033604568481445315
+   ],
+   "height": 0.039179977016717556,
+   "top_z": -0.029120022983282444,
+   "points": 1473,
+   "frame": "robot base"
+  }
+ ]
+}

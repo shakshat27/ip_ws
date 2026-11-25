@@ -1,0 +1,42 @@
+# Allow-list: everything not named here stays out of git.
+# Files over 100 MB (floor2.blend, detector weights) stay out: GitHub limit.
+/*
+!/.gitignore
+!/README.md
+!/env.sh
+!/cell.usd
+!/cell.rdk
+!/floor.usdc
+!/Conveyor.blend
+!/Conveyor.usdc
+!/conv.usd
+!/assets/
+!/textures/
+!/snap/
+!/src/
+!/config/
+!/calib/
+!/documentation/
+!/report/
+!/evals/
+!/env/
+!/models/
+/models/*
+!/models/moveit_ur10/
+!/models/curobo_ur10/
+!/models/scene/
+!/models/medium_box_v2_inv_20261021_114416/
+/models/medium_box_v2_inv_20261021_114416/*.pth
+!/runs/
+/runs/*
+!/runs/20261023_143258_pick/
+
+# no backups, caches or eval images
+*.bak
+*.bak.*
+*.blend1
+__pycache__/
+*.pyc
+/evals/**/*.png
+/evals/**/*.jpg
+/models/curobo_ur10/ur_description

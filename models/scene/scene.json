@@ -1,0 +1,130 @@
+{
+ "origin_world": [
+  4.059352161538295,
+  1.2943517075008166,
+  0.6588375148134028
+ ],
+ "frame": "robot base (world minus origin, axes world-aligned)",
+ "items": {
+  "belt": {
+   "prim": "/World/Conveyors/Plane",
+   "vertices": 4,
+   "triangles": 2,
+   "min": [
+    -1.6729,
+    -1.0294,
+    -0.103
+   ],
+   "max": [
+    0.2864,
+    -0.4989,
+    -0.103
+   ]
+  },
+  "table_top": {
+   "prim": "/World/floor/Cube",
+   "vertices": 8,
+   "triangles": 12,
+   "min": [
+    -1.5121,
+    0.3466,
+    0.0136
+   ],
+   "max": [
+    0.2858,
+    0.9091,
+    0.0386
+   ]
+  },
+  "table_top_2": {
+   "prim": "/World/floor/Cube_001",
+   "vertices": 1548,
+   "triangles": 3140,
+   "min": [
+    0.5941,
+    -0.8915,
+    0.0135
+   ],
+   "max": [
+    1.1566,
+    0.9064,
+    0.0385
+   ]
+  },
+  "table_legs": {
+   "prim": "/World/floor/TableLegs",
+   "vertices": 9152,
+   "triangles": 18312,
+   "min": [
+    -1.5241,
+    0.3347,
+    -0.6756
+   ],
+   "max": [
+    0.2977,
+    0.921,
+    0.013
+   ]
+  },
+  "table_legs_2": {
+   "prim": "/World/floor/TableLegs_001",
+   "vertices": 9152,
+   "triangles": 18312,
+   "min": [
+    0.5822,
+    -0.9033,
+    -0.6756
+   ],
+   "max": [
+    1.1685,
+    0.9184,
+    0.013
+   ]
+  },
+  "basket_a": {
+   "prim": "/World/floor/Basket",
+   "vertices": 224,
+   "triangles": 336,
+   "min": [
+    -0.4048,
+    0.4475,
+    0.0416
+   ],
+   "max": [
+    -0.1315,
+    0.8013,
+    0.146
+   ]
+  },
+  "basket_b": {
+   "prim": "/World/floor/Basket01",
+   "vertices": 224,
+   "triangles": 336,
+   "min": [
+    -0.0897,
+    0.4475,
+    0.0416
+   ],
+   "max": [
+    0.1837,
+    0.8013,
+    0.146
+   ]
+  },
+  "robot_pedestal": {
+   "prim": "/World/floor/Robot_BAse",
+   "vertices": 214,
+   "triangles": 430,
+   "min": [
+    -0.2408,
+    -0.1424,
+    -0.6588
+   ],
+   "max": [
+    0.4141,
+    0.1395,
+    0.0022
+   ]
+  }
+ }
+}
